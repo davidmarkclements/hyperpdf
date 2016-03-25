@@ -6,12 +6,12 @@ Options
   -i | --input               String - The path to the HTML file or url
   -o | --output              String - The path of the output PDF
   -c | --css                 String - The path to custom CSS
-  -b | --printBackground     Boolean - Whether to print CSS backgrounds.
-                               false - true
+  -p | --printBackground     Boolean - Whether to print CSS backgrounds.
+                               default - true
   -s | --printSelectionOnly  Boolean - Whether to print selection only
-                               false - default
+                               default - false
   -l | --landscape           Boolean - true for landscape, false for portrait.
-                               false - default
+                               default - false
   -m | --marginType          Integer - Specify the type of margins to use
                                0 - default
                                1 - none
@@ -19,11 +19,11 @@ Options
   -d | --disableCache        Disable HTTP caching
 
 Usage
-  $ electron-pdf <input> <output>
-  $ electron-pdf <input> <output> -l
+  $ hyperpdf <input> <output>
+  $ hyperpdf <input> <output> -l
 
 Examples
-  $ electron-pdf http://fraserxu.me ~/Desktop/fraserxu.pdf
-  $ electron-pdf ./index.html ~/Desktop/index.pdf
-  $ electron-pdf ./README.md ~/Desktop/README.pdf -l
-  $ electron-pdf ./README.md ~/Desktop/README.pdf -l -c my-awesome-css.css
+  $ hyperpdf http://davidmarkclements.com dmc.pdf
+  $ hyperpdf ./index.html index.pdf
+  $ hyperpdf ./README.md README.pdf -l
+  $ hyperpdf ./README.md README.pdf -l -c my-awesome-css.css
