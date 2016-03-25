@@ -1,6 +1,6 @@
 {
   "name": "hyperpdf",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A command line tool to generate PDF from URL, HTML or Markdown files",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,14 @@
   "devDependencies": {
     "standard": "^6.0.6"
   },
-  "bundleDependencies": ["github-markdown-css", "highlight.js", "marked", "minimist", "object-assign", "uuid"],
+  "bundleDependencies": [
+    "github-markdown-css",
+    "highlight.js",
+    "marked",
+    "minimist",
+    "object-assign",
+    "uuid"
+  ],
   "dependencies": {
     "electron-prebuilt": "^0.37.2",
     "github-markdown-css": "^2.0.9",
