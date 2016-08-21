@@ -83,6 +83,7 @@ function render (indexUrl, output, cb) {
   if (argv.d || argv.disableCache) {
     loadOpts.extraHeaders = 'pragma: no-cache\n'
   }
+
   win.loadURL(indexUrl, loadOpts)
 
   // print to pdf args
