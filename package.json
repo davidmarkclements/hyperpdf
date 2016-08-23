@@ -4,7 +4,8 @@
   "description": "A command line tool to generate PDF from URL, HTML or Markdown files",
   "main": "index.js",
   "scripts": {
-    "test": "standard"
+    "test": "standard",
+    "example": "./cli.js example/card.html example/card.pdf"
   },
   "bin": "cli.js",
   "keywords": [
