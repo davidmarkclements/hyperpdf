@@ -5,7 +5,6 @@ app.dock.hide()
 var argv = require('minimist')(process.argv.slice(2))
 var fs = require('fs')
 var path = require('path')
-var pkg = require('./package.json')
 var BrowserWindow = electron.BrowserWindow
 
 var wargs = require('./lib/args')
@@ -13,17 +12,6 @@ var markdownToHTMLPath = require('./lib/markdown')
 
 var input = argv._[0] || argv.i || argv.input
 var output = argv._[1] || argv.o || argv.output
-
-if (argv.v || argv.version) {
-  console.log('v' + pkg.version)
-  process.exit(0)
-}
-
-if (argv.h || argv.help) {
-  usage(1)
-} else if (!input || !output) {
-  usage(1)
-}
 
 app.on('ready', appReady)
 
@@ -102,13 +90,5 @@ function render (indexUrl, output, cb) {
 
       fs.writeFile(path.resolve(output), data, cb)
     })
-  })
-}
-
-function usage (code) {
-  var rs = fs.createReadStream(__dirname + '/usage.txt')
-  rs.pipe(process.stdout)
-  rs.on('close', function () {
-    if (code) process.exit(code)
   })
 }
