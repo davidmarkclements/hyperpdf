@@ -40,7 +40,7 @@ $ hyperpdf index.md index.pdf
 $ hyperpdf index.html index.pdf
 ```
 
-### To generate a PDF from a Markdown file with custom CSS 
+### To generate a PDF from a Markdown file with custom CSS
 #### defaults to Github markdown style
 
 ```
@@ -89,10 +89,12 @@ $ hyperpdf http://davidmarkclements.com dmc.pdf
 
 ```
 
+## API
+
 
 ## Credits
 
-Original code base is by Fraser Xu https://github.com/fraserxu/electron-pdf. 
+Original code base is by Fraser Xu https://github.com/fraserxu/electron-pdf.
 At the time of writing there's over ten sitting PR's, so we created a new module
 because we needed some different behaviour quickly. If the electron-pdf project
 has come back to life, it's better to feed into the original. However, if there's
