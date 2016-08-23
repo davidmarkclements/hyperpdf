@@ -21,13 +21,24 @@ app.on('window-all-closed', function () {
   }
 })
 
+function isMarkdown (input) {
+  var ext = path.extname(input)
+  return ext.indexOf('md') > 0 || ext.indexOf('markdown') > 0
+}
+
+function isFile (string, cb) {
+  fs.stat(string, function (err, stat) {
+    if (err) {
+      return cb(false)
+    } else if (err && err.code == 'ENOENT') {
+      return cb(false)
+    }
+    return cb(true)
+  })
+}
+
 function appReady () {
   var customCss = argv.c || argv.css
-
-  function isMarkdown (input) {
-    var ext = path.extname(input)
-    return ext.indexOf('md') > 0 || ext.indexOf('markdown') > 0
-  }
 
   if (isMarkdown(input)) {
     var opts = {}
@@ -44,19 +55,32 @@ function appReady () {
       }
 
       var indexUrl = wargs.urlWithArgs(tmpHTMLPath, {})
-      render(indexUrl, output, function (err) {
+      return render(indexUrl, output, function (err) {
         if (err) { console.error(err) }
         fs.unlinkSync(tmpHTMLPath)
         app.quit()
       })
     })
-  } else {
-    var indexUrl = wargs.urlWithArgs(input, {})
-    render(indexUrl, output, function (err) {
-      if (err) { console.error(err) }
+  }
+
+  // check for type of file:
+  //  if is string convert string to data uri,
+  //  otherwise assume string is a path to a file
+  //  TODO: integrate markdown check in branching here
+  isFile(input, function (result) {
+    let indexUrl
+    if (result === true) {
+      indexUrl = wargs.urlWithArgs(input, {})
+    } else {
+      indexUrl = 'data:text/html,' + input
+    }
+
+    return render(indexUrl, output, function (err) {
+      if (err) console.error(err)
+
       app.quit()
     })
-  }
+  })
 }
 
 /**
