@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "standard",
-    "example": "./cli.js example/card.html example/card.pdf"
+    "example": "./bin/hyperpdf example/card.html example/card.pdf"
   },
-  "bin": "cli.js",
+  "bin": "bin/hyperpdf",
   "keywords": [
     "electron",
     "electron-tool",

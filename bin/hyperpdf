@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var fs = require('fs')
-var pkg = require('./package.json')
+var pkg = require('../package.json')
 var path = require('path')
 var spawn = require('child_process').spawn
 var electronPath = require('electron-prebuilt')
@@ -12,7 +12,7 @@ var args = process.argv.slice(2)
 var input = argv._[0] || argv.i || argv.input
 var output = argv._[1] || argv.o || argv.output
 
-args.unshift(path.resolve(path.join(__dirname, './index.js')))
+args.unshift(path.resolve(path.join(__dirname, '../index.js')))
 var electron = spawn(electronPath, args, {
   stdio: ['inherit', 'inherit', 'pipe', 'ipc']
 })
@@ -35,7 +35,7 @@ if (argv.h || argv.help) {
 }
 
 function usage (code) {
-  var rs = fs.createReadStream(path.join(__dirname, '/usage.txt'))
+  var rs = fs.createReadStream(path.join(__dirname, '../usage.txt'))
   rs.pipe(process.stdout)
   rs.on('close', function () {
     if (code) process.exit(code)
