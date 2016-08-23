@@ -55,7 +55,7 @@ function appReady () {
       }
 
       var indexUrl = wargs.urlWithArgs(tmpHTMLPath, {})
-      return render(indexUrl, output, function (err) {
+      return render(indexUrl, output, null, function (err) {
         if (err) { console.error(err) }
         fs.unlinkSync(tmpHTMLPath)
         app.quit()
@@ -75,7 +75,7 @@ function appReady () {
       indexUrl = 'data:text/html,' + input
     }
 
-    return render(indexUrl, output, function (err) {
+    return render(indexUrl, output, null, function (err) {
       if (err) console.error(err)
 
       app.quit()
@@ -87,7 +87,9 @@ function appReady () {
  * render file to pdf
  * @param  {String} indexUrl The path to the HTML or url
  */
-function render (indexUrl, output, cb) {
+function render (indexUrl, output, opts, cb) {
+  const options = Object.assign({}, opts)
+
   var win = new BrowserWindow({ width: 0, height: 0, show: false })
   win.on('closed', function () { win = null })
 
@@ -112,6 +114,15 @@ function render (indexUrl, output, cb) {
         return cb(err)
       }
 
+      if (options.mode === 'buffer') {
+        return cb(null)
+      }
+
+      if (options.mode === 'stream') {
+        return cb(null)
+      }
+
+      // fallthrough will provide a file
       fs.writeFile(path.resolve(output), data, cb)
     })
   })
