@@ -91,6 +91,29 @@ $ hyperpdf http://davidmarkclements.com dmc.pdf
 
 ## API
 
+```js
+const pdf = require('hyperpdf')
+const fs = require('fs')
+// get a string of HTML
+const html = fs.readFileSync('./example/card.html', 'utf-8')
+
+pdf.create(html).toFile('./example/card.pdf', function (err, res) {
+  console.log(res.filename)
+})
+
+pdf.create(html).toStream(function (err, stream) {
+  stream.pipe(fs.createWriteStream('./example/streamed_card.pdf'))
+})
+
+pdf.create(html).toBuffer(function (err, buffer) {
+  console.log('This is a buffer:', Buffer.isBuffer(buffer))
+})
+
+// for convenience
+pdf.create(html, {}, function(err, buffer) {
+  console.log('This is a buffer:', Buffer.isBuffer(buffer))
+})
+```
 
 ## Credits
 
