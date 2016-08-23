@@ -12,7 +12,7 @@ var args = process.argv.slice(2)
 var input = argv._[0] || argv.i || argv.input
 var output = argv._[1] || argv.o || argv.output
 
-args.unshift(path.resolve(path.join(__dirname, '../index.js')))
+args.unshift(path.resolve(path.join(__dirname, '../runner.js')))
 var electron = spawn(electronPath, args, {
   stdio: ['inherit', 'inherit', 'pipe', 'ipc']
 })
