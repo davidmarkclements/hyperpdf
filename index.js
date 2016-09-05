@@ -1,6 +1,7 @@
 'use strict'
 const electronPath = require('electron')
 const spawn = require('child_process').spawn
+const exec = require('child_process').exec
 const path = require('path')
 const fs = require('fs')
 
@@ -168,9 +169,28 @@ PDF.prototype.toStream = function (cb) {
   })
 }
 
+function initEnvironment (screensize, cb) {
+  // hadnle default case for just specifying a callback
+  if (typeof screensize === 'function') {
+    cb = screensize
+    screensize = '1280x2000x24'
+  }
+
+  exec(`Xvfb -ac -screen scrn ${screensize} :9.0 & export DISPLAY=:9.0`, (error, stdout, stderr) => {
+    if (error) {
+      return cb(err)
+    }
+    return cb(null)
+  })
+}
+
 // this is for exposing the pdf.create()[.(toBuffer|toStream|toFile)] API.
 module.exports = {
   create: function (html, options, cb) {
     return new PDF(html, options, cb)
+  },
+
+  _initEnvironment: function (screensize, cb) {
+    initEnvironment(screensize, cb)
   }
 };
