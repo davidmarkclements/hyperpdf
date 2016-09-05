@@ -15,6 +15,52 @@ function isFile (string, cb) {
   })
 }
 
+function execWithMode (filename, html, mode, cb) {
+  let hasCalled = false
+  let res = []
+
+  isFile(html, function (result) {
+    const args = [
+      './runner.js',
+      // NOTE: branching for HTML code or file
+      // will be done in runner.js again
+      result === false ? html : path.resolve(__dirname, html), // input
+      path.resolve(__dirname, filename), // output
+      mode
+    ]
+
+    const electron = spawn(electronPath, args, {
+      stdio: ['inherit', 'pipe', 'pipe', 'ipc']
+    })
+
+    // handle error cases by writing them to stderr. Exit below.
+    electron.stderr.on('data', function (data) {
+      var str = data.toString('utf8')
+      // it's Chromium, STFU
+      if (str.match(/^\[\d+\:\d+/)) return
+      process.stderr.write(data)
+    })
+    // if buffer has been sent...
+    electron.stdout.on('data', function (data) {
+      res.push(data)
+    })
+    // if has errored...
+    electron.on('error', function () {
+      if (!hasCalled) {
+        hasCalled = true
+        return cb()
+      }
+    })
+    // if file is generated...
+    electron.on('exit', function (data) {
+      if (!hasCalled) {
+        hasCalled = true
+        return cb()
+      }
+    })
+  })
+}
+
 function PDF (html, options, cb) {
   this.html = html
   this.options = Object.assign({}, options)
@@ -25,48 +71,12 @@ function PDF (html, options, cb) {
   }
 }
 
-PDF.prototype.toFile = function (filename, cb) {
-  let hasCalled = false
-  const self = this
-
-  isFile(this.html, function (result) {
-    const args = [
-      './runner.js',
-      // NOTE: branching for HTML code or file
-      // will be done in runner.js again
-      result === false ? self.html : path.resolve(__dirname, self.html), // input
-      path.resolve(__dirname, filename) // output
-    ]
-
-    var electron = spawn(electronPath, args, {
-      stdio: ['inherit', 'inherit', 'pipe', 'ipc']
-    })
-
-    electron.stderr.on('data', function (data) {
-      var str = data.toString('utf8')
-      // it's Chromium, STFU
-      if (str.match(/^\[\d+\:\d+/)) return
-      process.stderr.write(data)
-    })
-
-    electron.on('error', function () {
-      if (!hasCalled) {
-        hasCalled = true
-        return cb()
-      }
-    })
-
-    electron.on('exit', function (data) {
-      if (!hasCalled) {
-        hasCalled = true
-        return cb()
-      }
-    })
-  })
+PDF.prototype.toFile = function (outputFilename, cb) {
+  execWithMode(outputFilename, this.html, '--file', cb)
 }
 
-PDF.prototype.toBuffer = function () {
-
+PDF.prototype.toBuffer = function (outputFilename, cb) {
+  execWithMode(outputFilename, this.html, '--buffer', cb)
 }
 
 PDF.prototype.toStream = function () {

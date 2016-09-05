@@ -37,6 +37,25 @@ function isFile (string, cb) {
   })
 }
 
+function pdfOutPutType(args) {
+  let res
+  const search = [
+    '--buffer',
+    '--stream',
+    '--file',
+  ]
+
+  args.forEach(function (el) {
+    search.forEach(function (type) {
+      if (el.indexOf(type) >= 0) {
+        res = type
+      }
+    })
+  })
+
+  return res.substring(2)
+}
+
 function appReady () {
   var customCss = argv.c || argv.css
 
@@ -62,7 +81,6 @@ function appReady () {
       })
     })
   }
-
   // check for type of file:
   //  if is string convert string to data uri,
   //  otherwise assume string is a path to a file
@@ -75,7 +93,10 @@ function appReady () {
       indexUrl = 'data:text/html,' + input
     }
 
-    return render(indexUrl, output, null, function (err) {
+    const opts = {}
+    opts.mode = pdfOutPutType(process.argv)
+
+    return render(indexUrl, output, opts, function (err) {
       if (err) console.error(err)
 
       app.quit()
@@ -87,8 +108,9 @@ function appReady () {
  * render file to pdf
  * @param  {String} indexUrl The path to the HTML or url
  */
-function render (indexUrl, output, opts, cb) {
-  const options = Object.assign({}, opts)
+function render (indexUrl, output, options, cb) {
+  // override because of variable naming in win.webContents
+  options = Object.assign({}, options)
 
   var win = new BrowserWindow({ width: 0, height: 0, show: false })
   win.on('closed', function () { win = null })
@@ -115,13 +137,21 @@ function render (indexUrl, output, opts, cb) {
       }
 
       if (options.mode === 'buffer') {
-        return cb(null)
+        // sending on next tick is necessary to prevent electron
+        // crashing on malloc
+        process.nextTick(function () {
+          // generate .stdout.on('data') with nicer control flow
+          fs.write(1, data.toString(), function () {
+            return cb(null)
+          })
+        })
       }
 
       if (options.mode === 'stream') {
-        return cb(null)
+        process.nextTick(function () {
+          return cb(null)
+        })
       }
-
       // fallthrough will provide a file
       fs.writeFile(path.resolve(output), data, cb)
     })
