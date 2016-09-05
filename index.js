@@ -11,6 +11,7 @@ function isFile (string, cb) {
     } else if (err && err.code == 'ENOENT') {
       return cb(false)
     }
+
     return cb(true)
   })
 }
@@ -39,6 +40,7 @@ function execWithMode (filename, html, mode, cb) {
       // it's Chromium, STFU
       if (str.match(/^\[\d+\:\d+/))
         return
+
       process.stderr.write(data)
     })
     // if buffer has been sent...
@@ -90,6 +92,7 @@ PDF.prototype.toBuffer = function (cb) {
       if (err) {
         return cb(err)
       }
+
       fs.unlink(data.location, (err) => {
         if (err) {
           return cb(err)
@@ -100,8 +103,22 @@ PDF.prototype.toBuffer = function (cb) {
   })
 }
 
-PDF.prototype.toStream = function () {
+PDF.prototype.toStream = function (cb) {
+  execWithMode(null, this.html, '--stream', (data) => {
+    fs.readFile(data.location, (err, buf) => {
+      if (err) {
+        return cb(err)
+      }
 
+      const stream = fs.createReadStream(data.location)
+      // take care of some garbage, but don't care if it works :)
+      stream.on('end', () => {
+        fs.unlink(data.location, () => {})
+      })
+
+      return cb(stream, data.location)
+    })
+  })
 }
 
 module.exports = {

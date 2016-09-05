@@ -147,6 +147,7 @@ function render (indexUrl, output, options, cb) {
             if (err) {
               return cb(err)
             }
+
             process.send({ type: 'buffer', location: filename, buffer_size: data.length })
             return cb(null)
           })
@@ -154,8 +155,17 @@ function render (indexUrl, output, options, cb) {
       }
 
       if (options.mode === 'stream') {
-        process.nextTick(function () {
-          return cb(null)
+        return process.nextTick(function () {
+          const filename = path.resolve(os.tmpdir(), `${crypto.randomBytes(64).toString('hex')}.pdf`)
+
+          fs.writeFile(filename, data, (err) => {
+            if (err) {
+              return cb(err)
+            }
+
+            process.send({ type: 'stream', location: filename, buffer_size: data.length })
+            return cb(null)
+          })
         })
       }
       // fallthrough will provide a file
