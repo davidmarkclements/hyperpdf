@@ -15,8 +15,9 @@ var markdownToHTMLPath = require('./lib/markdown')
 var input = argv._[0] || argv.i || argv.input
 var output = argv._[1] || argv.o || argv.output
 
+// entry point; handled below
 app.on('ready', appReady)
-
+// electron quirk
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') {
     app.quit()
@@ -28,6 +29,8 @@ function isMarkdown (input) {
   return ext.indexOf('md') > 0 || ext.indexOf('markdown') > 0
 }
 
+// handle case of plain strings or strings that
+// actually are filenames
 function isFile (string, cb) {
   fs.stat(string, function (err, stat) {
     if (err) {
@@ -39,6 +42,9 @@ function isFile (string, cb) {
   })
 }
 
+// a helper function to allow for dash-dash style cli
+// options, to avoid strange cli parsing issues.
+// Will pass down the value as option.mode.
 function pdfOutPutType(args) {
   let res
   const search = [
@@ -58,6 +64,8 @@ function pdfOutPutType(args) {
   return res.substring(2)
 }
 
+// this is the main entry point to
+// the electron process
 function appReady () {
   var customCss = argv.c || argv.css
 
@@ -106,7 +114,7 @@ function appReady () {
 }
 
 /**
- * render file to pdf
+ * render data to pdf
  * @param  {String} indexUrl The path to the HTML or url
  */
 function render (indexUrl, output, options, cb) {
@@ -168,7 +176,7 @@ function render (indexUrl, output, options, cb) {
           })
         })
       }
-      // fallthrough will provide a file
+      // fallthrough will provide a file; euqivalent to options.mode === file
       fs.writeFile(path.resolve(output), data, cb)
     })
   })

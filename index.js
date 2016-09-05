@@ -72,6 +72,14 @@ function execWithMode (filename, html, mode, cb) {
   })
 }
 
+/**
+ * This class handles exclusively the API for PDF generation, to allow for
+ * a similar experience then predecessors / competitors.
+ * @constructor
+ * @param {String}   html    Expects a string of HTML or a path to a file of HTML
+ * @param {Object}   options Object of options.
+ * @param {Function} cb      A callback can be provided in the transform-less case of pdf.create(cb). Equivalent of pdf.create(file).toBuffer(cb)
+ */
 function PDF (html, options, cb) {
   this.html = html
   this.options = Object.assign({}, options)
@@ -82,10 +90,34 @@ function PDF (html, options, cb) {
   }
 }
 
+/**
+ * Pass HTMl as string or a path to HTML to pdf.create(html) and transform
+ * the result with this function to a file directly.
+ *
+ * Under the hood electron will write the directly to the specified location.
+ * @param  {String}   outputFilename path to the resulting file
+ * @param  {Function} cb
+ * @return {Callback}                with no parameters
+ */
 PDF.prototype.toFile = function (outputFilename, cb) {
   execWithMode(outputFilename, this.html, '--file', cb)
 }
 
+/**
+ * Pass HTMl as string or a path to HTML to pdf.create(html) and transform
+ * the result with this function to a buffer.
+ *
+ * Under the hood electron will create a buffer, which will be written to file in
+ * your systems `tmp` diretory, the path will be sent to the parent process,
+ * which will read the file, returning the buffer and unlink (maybe delete) the
+ * file in `tmp` dir.
+ *
+ * NOTE: The system will be strained by this approach, but due to limitations in
+ * the process communication with electron, this cannot be avoided. This
+ * workkaround is due for refactoring, asap.
+ * @param  {Function} cb [description]
+ * @return {Callback}      Callback with (error, buffer)
+ */
 PDF.prototype.toBuffer = function (cb) {
   execWithMode(null, this.html, '--buffer', (data) => {
     fs.readFile(data.location, (err, buf) => {
@@ -103,6 +135,21 @@ PDF.prototype.toBuffer = function (cb) {
   })
 }
 
+/**
+ * Pass HTMl as string or a path to HTML to pdf.create(html) and transform
+ * the result with this function to a stream.
+ *
+ * Under the hood electron will create a buffer, which will be written to file in
+ * your systems `tmp` diretory, the path will be sent to the parent process,
+ * which will read the file as stream and return this stream. Also .on('end'), the
+ * file will be unlinked.
+ *
+ * NOTE: The system will be strained by this approach, but due to limitations in
+ * the process communication with electron, this cannot be avoided. This
+ * workaround is due for refactoring, asap.
+ * @param  {Function} cb [description]
+ * @return {[type]}      [description]
+ */
 PDF.prototype.toStream = function (cb) {
   execWithMode(null, this.html, '--stream', (data) => {
     fs.readFile(data.location, (err, buf) => {
@@ -121,6 +168,7 @@ PDF.prototype.toStream = function (cb) {
   })
 }
 
+// this is for exposing the pdf.create()[.(toBuffer|toStream|toFile)] API.
 module.exports = {
   create: function (html, options, cb) {
     return new PDF(html, options, cb)
