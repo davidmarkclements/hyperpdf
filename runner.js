@@ -4,6 +4,8 @@ app.dock.hide()
 
 var argv = require('minimist')(process.argv.slice(2))
 var fs = require('fs')
+var os = require('os')
+var crypto = require('crypto')
 var path = require('path')
 var BrowserWindow = electron.BrowserWindow
 
@@ -65,7 +67,6 @@ function appReady () {
     if (customCss) {
       opts.customCss = customCss
     }
-
     // if given a markdown, render it into HTML and return the path of the HTML
     input = markdownToHTMLPath(input, opts, function (err, tmpHTMLPath) {
       if (err) {
@@ -139,9 +140,14 @@ function render (indexUrl, output, options, cb) {
       if (options.mode === 'buffer') {
         // sending on next tick is necessary to prevent electron
         // crashing on malloc
-        process.nextTick(function () {
-          // generate .stdout.on('data') with nicer control flow
-          fs.write(1, data.toString(), function () {
+        return process.nextTick(function () {
+          const filename = path.resolve(os.tmpdir(), `${crypto.randomBytes(64).toString('hex')}.pdf`)
+
+          fs.writeFile(filename, data, (err) => {
+            if (err) {
+              return cb(err)
+            }
+            process.send({ type: 'buffer', location: filename, buffer_size: data.length })
             return cb(null)
           })
         })

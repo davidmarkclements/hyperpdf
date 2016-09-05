@@ -1,5 +1,5 @@
 'use strict'
-const electronPath = require('electron-prebuilt')
+const electronPath = require('electron')
 const spawn = require('child_process').spawn
 const path = require('path')
 const fs = require('fs')
@@ -25,7 +25,7 @@ function execWithMode (filename, html, mode, cb) {
       // NOTE: branching for HTML code or file
       // will be done in runner.js again
       result === false ? html : path.resolve(__dirname, html), // input
-      path.resolve(__dirname, filename), // output
+      filename ? path.resolve(__dirname, filename) : null, // output; null for buffer
       mode
     ]
 
@@ -37,7 +37,8 @@ function execWithMode (filename, html, mode, cb) {
     electron.stderr.on('data', function (data) {
       var str = data.toString('utf8')
       // it's Chromium, STFU
-      if (str.match(/^\[\d+\:\d+/)) return
+      if (str.match(/^\[\d+\:\d+/))
+        return
       process.stderr.write(data)
     })
     // if buffer has been sent...
@@ -49,6 +50,14 @@ function execWithMode (filename, html, mode, cb) {
       if (!hasCalled) {
         hasCalled = true
         return cb()
+      }
+    })
+    // if has messages... this will be used in the .toBuffer-case, for
+    // metadata transport
+    electron.on('message', function (msg) {
+      if (!hasCalled) {
+        hasCalled = true
+        return cb(msg)
       }
     })
     // if file is generated...
@@ -75,8 +84,20 @@ PDF.prototype.toFile = function (outputFilename, cb) {
   execWithMode(outputFilename, this.html, '--file', cb)
 }
 
-PDF.prototype.toBuffer = function (outputFilename, cb) {
-  execWithMode(outputFilename, this.html, '--buffer', cb)
+PDF.prototype.toBuffer = function (cb) {
+  execWithMode(null, this.html, '--buffer', (data) => {
+    fs.readFile(data.location, (err, buf) => {
+      if (err) {
+        return cb(err)
+      }
+      fs.unlink(data.location, (err) => {
+        if (err) {
+          return cb(err)
+        }
+        return cb(buf)
+      })
+    })
+  })
 }
 
 PDF.prototype.toStream = function () {
