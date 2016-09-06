@@ -186,7 +186,7 @@ function initEnvironment (screensize, cb) {
     screensize = '1280x2000x24'
   }
 
-  exec(`Xvfb -ac -screen scrn ${screensize} :9.0 & export DISPLAY=:9.0`, (error, stdout, stderr) => {
+  exec(`export DISPLAY=':99.0 && Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &`, (error, stdout, stderr) => {
     if (error) {
       return cb(err)
     }
