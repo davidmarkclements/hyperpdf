@@ -35,6 +35,11 @@ function isMarkdown (input) {
 // handle case of plain strings or strings that
 // actually are filenames
 function isFile (string, cb) {
+  // linux fs.stat might throw, REVIEW
+  if (!string) {
+    string = ''
+  }
+
   fs.stat(string, function (err, stat) {
     if (err) {
       return cb(false)
@@ -55,7 +60,6 @@ function mmToMicron (input) {
 // TODO: refactor; currently a crook
 function parseCliOpts(args) {
   let opts = {}
-  let res
   // mode parsing
   const search = [
     '--buffer',
@@ -66,12 +70,10 @@ function parseCliOpts(args) {
   args.forEach(function (el) {
     search.forEach(function (type) {
       if (el.indexOf(type) >= 0) {
-        res = type
+        opts.mode = type.substring(2)
       }
     })
   })
-
-  opts.mode = res.substring(2)
 
   args.forEach(function (el) {
     if (el.indexOf('--options=') >= 0) {
