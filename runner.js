@@ -1,6 +1,9 @@
 var electron = require('electron')
 var app = electron.app
-app.dock.hide()
+
+if (process.platform ==='darwin') {
+  app.dock.hide()
+}
 
 var argv = require('minimist')(process.argv.slice(2))
 var fs = require('fs')
