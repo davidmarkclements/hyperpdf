@@ -29,6 +29,10 @@ pdf.create(pathToFile).toStream((stream) => {
   stream.pipe(fs.createWriteStream('./example/foo_2.pdf'))
 })
 
-pdf.create('<h1>hyperpdf</h1>', {pageSize: 'Legal', landscape: true}).toFile('example/hyper_1.pdf', () => {
+pdf.create('<h1>hyperpdf</h1>', { pageSize: 'Legal', landscape: true }).toFile('example/hyper_1.pdf', () => {
+
+})
+
+pdf.create('<h1>hyperpdf</h1>', { pageSize: { height: 210, width: 110 }, landscape: true }).toFile('example/hyper_1.pdf', () => {
 
 })

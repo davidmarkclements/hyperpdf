@@ -142,8 +142,9 @@ pdf.create(html, options).toFile('./example/card.pdf', function (err, res) {
 
 ```js
 const options = {
-  "orientation": "portrait" // possible: portrait or landscape
-  "format": "A4",           // possible: A3, A4, A5, Legal, Letter, Tabloid
+  "landscape": false        // possible: true or false
+  "format": "A4",           // possible: A3, A4, A5, Legal, Letter,
+                            // Tabloid or {height: 100, width: 200 } (in mm)
 }
 ```
 

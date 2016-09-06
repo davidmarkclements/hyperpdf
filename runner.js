@@ -42,6 +42,10 @@ function isFile (string, cb) {
   })
 }
 
+function mmToMicron (input) {
+  return Math.ceil(input * 1000)
+}
+
 // a helper function to allow for dash-dash style cli
 // options, to avoid strange cli parsing issues.
 // Will pass down the value as option.mode.
@@ -73,6 +77,12 @@ function parseCliOpts(args) {
       Object.assign(opts, JSON.parse(el.substring('--options='.length)))
     }
   })
+  // REVIEW: potential bug surface area, let alone for chromium(?) having
+  // some kind of min-size
+  if (opts.pageSize && typeof opts.pageSize === 'object') {
+    opts.pageSize.height = mmToMicron(opts.pageSize.height)
+    opts.pageSize.width = mmToMicron(opts.pageSize.width)
+  }
 
   return opts
 }
