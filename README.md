@@ -13,47 +13,45 @@ uses electron so it's self contained and good to go.
 ## Install
 
 
-```
-npm install hyperpdf -g
-```
-
-For gnu/linux installations without a graphical environment:
-
 ```bash
-$ sudo apt-get install xvfb # or equivalent
-$ export DISPLAY=':99.0'
-$ Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-$ hyperpdf ...
+npm install hyperpdf -g
+# or for programmatic usage
+npm install hyperpdf --save
 ```
 
 ## Usage
 
-### To generate a PDF from a Markdown file
+`hyperpdf` can be used via command-line or programmatically from within your
+program.
 
-```
+## CLI
+
+#### To generate a PDF from a Markdown file
+
+```bash
 $ hyperpdf index.md index.pdf
 ```
 
-### To generate a PDF from a HTML file
+#### To generate a PDF from a HTML file
 
-```
+```bash
 $ hyperpdf index.html index.pdf
 ```
 
-### To generate a PDF from a Markdown file with custom CSS
-#### defaults to Github markdown style
+#### To generate a PDF from a Markdown file with custom CSS
+##### defaults to Github markdown style
 
-```
+```bash
 $ hyperpdf index.html index.pdf -c my-awesome-css.css
 ```
 
-### To generate a PDF from a URL
+#### To generate a PDF from a URL
 
-```
+```bash
 $ hyperpdf http://davidmarkclements.com dmc.pdf
 ```
 
-### More
+#### More
 
 ```
 
@@ -89,7 +87,11 @@ $ hyperpdf http://davidmarkclements.com dmc.pdf
 
 ```
 
-## API
+### API
+
+The library offers an API, that should be familiar from libraries that have
+existed before, however it also exports the underlying constructor. As complete,
+first example:
 
 ```js
 const pdf = require('hyperpdf')
@@ -97,6 +99,14 @@ const fs = require('fs')
 // get a string of HTML
 const html = fs.readFileSync('./example/card.html', 'utf-8')
 
+pdf.create(html).toFile('./example/card.pdf', function (err, res) {
+  console.log(res.filename)
+})
+```
+
+In total the following transforms are offered
+
+```js
 pdf.create(html).toFile('./example/card.pdf', function (err, res) {
   console.log(res.filename)
 })
@@ -112,6 +122,58 @@ pdf.create(html).toBuffer(function (err, buffer) {
 // for convenience
 pdf.create(html, {}, function(err, buffer) {
   console.log('This is a buffer:', Buffer.isBuffer(buffer))
+})
+```
+
+#### Options
+
+All methods allow for options being passed to. Find a description of the defaults
+with some annotations below.
+
+```js
+const options = {
+  "orientation": "portrait"
+}
+pdf.create(html, options).toFile('./example/card.pdf', function (err, res) {
+  console.log(res.filename)
+})
+```
+
+
+```js
+const options = {
+  "orientation": "portrait" // possible: portrait or landscape
+  "format": "A4",           // possible: A3, A4, A5, Legal, Letter, Tabloid
+}
+```
+
+## Running Headless
+
+This repository includes an examples `Dockerfile` that enables you to run
+`electron` and hence `hyperpdf` headlessly on a server. This requires an OS, that
+support `Xfvb`. `Xfvb` needs to be run at startup, either thorugh a custom script,
+like:
+
+```bash
+$ sudo apt-get install xvfb # or equivalent
+$ export DISPLAY=':99.0'
+$ Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+$ hyperpdf index.html index.pdf
+```
+
+Or when run programmatically (currently) a private method that runs the above is
+offered:
+
+```js
+const pdf = require('hyperpdf')
+const fs = require('fs')
+
+pdf._initEnvironment(() => {
+  const html = fs.readFileSync('./example/card.html', 'utf-8')
+
+  pdf.create(html).toFile('./example/card.pdf', function (err, res) {
+    console.log(res.filename)
+  })
 })
 ```
 
