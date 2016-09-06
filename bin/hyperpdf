@@ -4,7 +4,7 @@ var fs = require('fs')
 var pkg = require('../package.json')
 var path = require('path')
 var spawn = require('child_process').spawn
-var electronPath = require('electron-prebuilt')
+var electronPath = require('electron')
 
 var argv = require('minimist')(process.argv.slice(2))
 var args = process.argv.slice(2)

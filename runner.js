@@ -110,6 +110,7 @@ function appReady () {
         if (err) { console.error(err) }
         fs.unlinkSync(tmpHTMLPath)
         app.quit()
+        process.exit(0)
       })
     })
   }
