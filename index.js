@@ -73,6 +73,10 @@ function execWithMode (filename, html, mode, cb) {
   })
 }
 
+const defaultOptions = {
+
+}
+
 /**
  * This class handles exclusively the API for PDF generation, to allow for
  * a similar experience then predecessors / competitors.
@@ -83,9 +87,14 @@ function execWithMode (filename, html, mode, cb) {
  */
 function PDF (html, options, cb) {
   this.html = html
-  this.options = Object.assign({}, options)
   // just a convenience wrapper
   // to match competitor APIs
+  if (options && typeof options === 'function') {
+    cb = options
+  }
+
+  this.options = Object.assign(defaultOptions, options)
+
   if (cb && typeof cb === 'function') {
     return this.toBuffer(cb)
   }
