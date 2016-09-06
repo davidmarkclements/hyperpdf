@@ -54,7 +54,6 @@ function mmToMicron (input) {
 // Will pass down the value as option.mode.
 // TODO: refactor; currently a crook
 function parseCliOpts(args) {
-  console.error(args);
   let opts = {}
   let res
   // mode parsing
