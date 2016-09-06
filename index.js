@@ -17,7 +17,7 @@ function isFile (string, cb) {
   })
 }
 
-function execWithMode (filename, html, mode, cb) {
+function execWithMode (filename, html, mode, options, cb) {
   let hasCalled = false
   let res = []
 
@@ -28,6 +28,7 @@ function execWithMode (filename, html, mode, cb) {
       // will be done in runner.js again
       result === false ? html : path.resolve(__dirname, html), // input
       filename ? path.resolve(__dirname, filename) : null, // output; null for buffer
+      options ? `--options=${JSON.stringify(options)}` : '', // output; null for buffer
       mode
     ]
 
@@ -110,7 +111,7 @@ function PDF (html, options, cb) {
  * @return {Callback}                with no parameters
  */
 PDF.prototype.toFile = function (outputFilename, cb) {
-  execWithMode(outputFilename, this.html, '--file', cb)
+  execWithMode(outputFilename, this.html, '--file', this.options, cb)
 }
 
 /**
@@ -129,7 +130,7 @@ PDF.prototype.toFile = function (outputFilename, cb) {
  * @return {Callback}      Callback with (error, buffer)
  */
 PDF.prototype.toBuffer = function (cb) {
-  execWithMode(null, this.html, '--buffer', (data) => {
+  execWithMode(null, this.html, '--buffer', this.options, (data) => {
     fs.readFile(data.location, (err, buf) => {
       if (err) {
         return cb(err)
@@ -161,7 +162,7 @@ PDF.prototype.toBuffer = function (cb) {
  * @return {[type]}      [description]
  */
 PDF.prototype.toStream = function (cb) {
-  execWithMode(null, this.html, '--stream', (data) => {
+  execWithMode(null, this.html, '--stream', this.options, (data) => {
     fs.readFile(data.location, (err, buf) => {
       if (err) {
         return cb(err)

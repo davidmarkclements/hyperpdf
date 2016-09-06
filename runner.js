@@ -45,12 +45,16 @@ function isFile (string, cb) {
 // a helper function to allow for dash-dash style cli
 // options, to avoid strange cli parsing issues.
 // Will pass down the value as option.mode.
-function pdfOutPutType(args) {
+// TODO: refactor; currently a crook
+function parseCliOpts(args) {
+  console.error(args);
+  let opts = {}
   let res
+  // mode parsing
   const search = [
     '--buffer',
     '--stream',
-    '--file',
+    '--file'
   ]
 
   args.forEach(function (el) {
@@ -61,7 +65,16 @@ function pdfOutPutType(args) {
     })
   })
 
-  return res.substring(2)
+  opts.mode = res.substring(2)
+
+  args.forEach(function (el) {
+    if (el.indexOf('--options=') >= 0) {
+      // TODO: do some sanitization / error checking here
+      Object.assign(opts, JSON.parse(el.substring('--options='.length)))
+    }
+  })
+
+  return opts
 }
 
 // this is the main entry point to
@@ -102,8 +115,7 @@ function appReady () {
       indexUrl = 'data:text/html,' + input
     }
 
-    const opts = {}
-    opts.mode = pdfOutPutType(process.argv)
+    const opts = parseCliOpts(process.argv)
 
     return render(indexUrl, output, opts, function (err) {
       if (err) console.error(err)
@@ -134,9 +146,10 @@ function render (indexUrl, output, options, cb) {
   // print to pdf args
   var opts = {
     marginsType: argv.m || argv.marginType || 1,
+    pageSize: options.pageSize || 'A4', // A3, A4, A5, Legal, Letter, Tabloid; TODO: verify putting in object with dimensions
     printBackground: argv.p || argv.printBackground || true,
     printSelectionOnly: argv.s || argv.printSelectionOnly || false,
-    landscape: argv.l || argv.landscape || false
+    landscape: argv.l || argv.landscape || options.landscape || false
   }
 
   win.webContents.on('did-finish-load', function () {
