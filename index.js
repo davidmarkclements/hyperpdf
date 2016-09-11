@@ -1,7 +1,6 @@
 'use strict'
 const electronPath = require('electron')
 const spawn = require('child_process').spawn
-const exec = require('child_process').exec
 const path = require('path')
 const fs = require('fs')
 
@@ -186,10 +185,12 @@ function initEnvironment (screensize, cb) {
     screensize = '1280x2000x24'
   }
 
-  exec(`export DISPLAY=':99.0' && Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &`, (error, stdout, stderr) => {
-    if (error) {
-      return cb(error)
-    }
+  const ini = spawn('bash', [path.resolve(path.parse(__filename).dir, './init_environment.sh')]);
+  ini.on('error', (err) => {
+    return cb(err)
+  })
+
+  ini.on('close', (code) => {
     return cb(null)
   })
 }
