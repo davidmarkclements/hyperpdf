@@ -139,7 +139,7 @@ PDF.prototype.toBuffer = function (cb) {
         if (err) {
           return cb(err)
         }
-        return cb(buf)
+        return cb(null, buf)
       })
     })
   })
