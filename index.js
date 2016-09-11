@@ -25,8 +25,8 @@ function execWithMode (filename, html, mode, options, cb) {
       path.resolve(path.parse(__filename).dir, './runner.js'),
       // NOTE: branching for HTML code or file
       // will be done in runner.js again
-      result === false ? html : path.resolve(__dirname, html), // input
-      filename ? path.resolve(__dirname, filename) : null, // output; null for buffer
+      result === false ? html : path.resolve(process.cwd(), html), // input
+      filename ? path.resolve(process.cwd(), filename) : null, // output; null for buffer
       options ? `--options=${JSON.stringify(options)}` : '', // output; null for buffer
       mode
     ]
