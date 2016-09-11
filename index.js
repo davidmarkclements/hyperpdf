@@ -8,7 +8,7 @@ function isFile (string, cb) {
   fs.stat(string, function (err, stat) {
     if (err) {
       return cb(false)
-    } else if (err && err.code == 'ENOENT') {
+    } else if (err && err.code === 'ENOENT') {
       return cb(false)
     }
 
@@ -39,8 +39,7 @@ function execWithMode (filename, html, mode, options, cb) {
     electron.stderr.on('data', function (data) {
       var str = data.toString('utf8')
       // it's Chromium, STFU
-      if (str.match(/^\[\d+\:\d+/))
-        return
+      if (str.match(/^\[\d+:\d+/)) return
 
       process.stderr.write(data)
     })
@@ -204,4 +203,4 @@ module.exports = {
   _initEnvironment: function (screensize, cb) {
     initEnvironment(screensize, cb)
   }
-};
+}

@@ -1,7 +1,7 @@
-var electron = require('electron')
-var app = electron.app
+const electron = require('electron')
+const app = electron.app
 
-if (process.platform ==='darwin') {
+if (process.platform === 'darwin') {
   app.dock.hide()
 }
 
@@ -43,7 +43,7 @@ function isFile (string, cb) {
   fs.stat(string, function (err, stat) {
     if (err) {
       return cb(false)
-    } else if (err && err.code == 'ENOENT') {
+    } else if (err && err.code === 'ENOENT') {
       return cb(false)
     }
     return cb(true)
@@ -58,7 +58,7 @@ function mmToMicron (input) {
 // options, to avoid strange cli parsing issues.
 // Will pass down the value as option.mode.
 // TODO: refactor; currently a crook
-function parseCliOpts(args) {
+function parseCliOpts (args) {
   let opts = {}
   // mode parsing
   const search = [
