@@ -22,7 +22,7 @@ function execWithMode (filename, html, mode, options, cb) {
 
   isFile(html, function (result) {
     const args = [
-      './runner.js',
+      path.resolve(path.parse(__filename).dir, './runner.js'),
       // NOTE: branching for HTML code or file
       // will be done in runner.js again
       result === false ? html : path.resolve(__dirname, html), // input
@@ -185,7 +185,7 @@ function initEnvironment (screensize, cb) {
     screensize = '1280x2000x24'
   }
 
-  const ini = spawn('bash', [path.resolve(path.parse(__filename).dir, './init_environment.sh')]);
+  const ini = spawn('bash', [path.resolve(path.parse(__filename).dir, './init_environment.sh')])
   ini.on('error', (err) => {
     return cb(err)
   })
