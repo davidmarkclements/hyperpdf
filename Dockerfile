@@ -27,6 +27,14 @@ RUN apt-get install -y \
   g++-multilib
 
 # Include the local file to working directory
-ADD . /app
+COPY /test /app/test
+COPY /lib /app/lib
+COPY /bin /app/bin
+COPY /index.js /app/index.js
+COPY /runner.js /app/runner.js
+COPY /package.json /app/package.json
+COPY /init_environment.sh /app/init_environment.sh
 
 WORKDIR /app
+
+RUN npm install
