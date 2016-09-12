@@ -106,7 +106,7 @@ function appReady () {
       opts.customCss = customCss
     }
     // if given a markdown, render it into HTML and return the path of the HTML
-    input = markdownToHTMLPath(input, opts, function (err, tmpHTMLPath) {
+    return markdownToHTMLPath(input, opts, function (err, tmpHTMLPath) {
       if (err) {
         console.error('Parse markdown file error', err)
         app.quit()
