@@ -1,3 +1,4 @@
+'use strict'
 const electron = require('electron')
 const app = electron.app
 
@@ -5,15 +6,15 @@ if (process.platform === 'darwin') {
   app.dock.hide()
 }
 
-var argv = require('minimist')(process.argv.slice(2))
-var fs = require('fs')
-var os = require('os')
-var crypto = require('crypto')
-var path = require('path')
-var BrowserWindow = electron.BrowserWindow
+const argv = require('minimist')(process.argv.slice(2))
+const fs = require('fs')
+const os = require('os')
+const crypto = require('crypto')
+const path = require('path')
+const BrowserWindow = electron.BrowserWindow
 
-var wargs = require('./lib/args')
-var markdownToHTMLPath = require('./lib/markdown')
+const wargs = require('./lib/args')
+const markdownToHTMLPath = require('./lib/markdown')
 
 var input = argv._[0] || argv.i || argv.input
 var output = argv._[1] || argv.o || argv.output
