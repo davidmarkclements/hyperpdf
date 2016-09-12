@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/davidmarkclements/hyperpdf",
   "devDependencies": {
+    "nyc": "^8.1.0",
     "standard": "^6.0.6",
     "tape": "^4.6.0"
   },
