@@ -4,7 +4,7 @@ const test = require('tape')
 const exec = require('child_process').exec
 
 
-test('write simple pdf with a heading to a file', (t) => {
+test('CLI: simple .html to .pdf', (t) => {
   pdf._initEnvironment((err) => {
     if (err) {
       throw err
