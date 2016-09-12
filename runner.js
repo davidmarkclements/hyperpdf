@@ -40,8 +40,7 @@ function isFile (string, cb) {
   if (!string) {
     string = ''
   }
-
-  fs.stat(string, function (err, stat) {
+  fs.stat(path.resolve(process.cwd(), string), function (err, stat) {
     if (err) {
       return cb(false)
     } else if (err && err.code === 'ENOENT') {
