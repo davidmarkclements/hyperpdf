@@ -10,8 +10,13 @@ test('write simple pdf with a heading to a file', (t) => {
       throw err
     }
 
-    console.log(`\nstdout: ${stdout}`)
-    console.log(`stderr: ${stderr}`)
+    if (stdout) {
+      console.log(`\nstdout: ${stdout}`)
+    }
+
+    if (stderr) {
+      console.log(`stderr: ${stderr}`)
+    }
 
     fs.readFile('test/fixtures/simpleHeading.pdf', (err, buf) => {
       if (err) {
