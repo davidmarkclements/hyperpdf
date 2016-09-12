@@ -27,5 +27,8 @@ build/Release
 node_modules
 
 index.html
-*.pdf
 *.css
+
+test/*.pdf
+example/*.pdf
+/*.pdf
