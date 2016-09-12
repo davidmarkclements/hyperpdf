@@ -34,3 +34,4 @@ example/*.pdf
 /*.pdf
 
 .vscode
+.nyc_output
