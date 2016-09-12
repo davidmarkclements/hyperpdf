@@ -97,6 +97,9 @@ function parseCliOpts (args) {
 function appReady () {
   var customCss = argv.c || argv.css
 
+  /**
+   * branch for either markdown OR regular files here
+   */
   if (isMarkdown(input)) {
     var opts = {}
 
