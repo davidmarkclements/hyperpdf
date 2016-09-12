@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "standard",
-    "test": "nyc --check-coverage --lines 60 --functions 70 --branches 50 --reporter=lcov tape 'test/**/*.js' && nyc report",
+    "test": "nyc --check-coverage --lines 60 --functions 70 --branches 45 --reporter=lcov tape 'test/**/*.js' && nyc report",
     "example": "./bin/hyperpdf example/card.html example/card.pdf"
   },
   "bin": "bin/hyperpdf",

@@ -177,20 +177,34 @@ PDF.prototype.toStream = function (cb) {
   })
 }
 
-function initEnvironment (screensize, cb) {
-  // hadnle default case for just specifying a callback
-  if (typeof screensize === 'function') {
-    cb = screensize
-    screensize = '1280x2000x24'
+function initEnvironment (cb) {
+  // bail early
+  if (process.platform !== 'linux') {
+    return cb(null)
   }
 
+  let hasCalled = false
+
   const ini = spawn('bash', [path.resolve(path.parse(__filename).dir, './init_environment.sh')])
+  ini.stderr.on('data', (data) => {
+    if (!hasCalled) {
+      hasCalled = true
+      return cb(data)
+    }
+  })
+
   ini.on('error', (err) => {
-    return cb(err)
+    if (!hasCalled) {
+      hasCalled = true
+      return cb(err)
+    }
   })
 
   ini.on('close', (code) => {
-    return cb(null)
+    if (!hasCalled) {
+      hasCalled = true
+      return cb(null)
+    }
   })
 }
 

@@ -4,23 +4,28 @@ const test = require('tape')
 
 
 test('write simple pdf with a heading to a file', (t) => {
-  pdf.create('<h1>hyperpdf</h1>').toFile('test/simpleHeading.pdf', (err) => {
+  pdf._initEnvironment((err) => {
     if (err) {
       throw err
     }
-
-    fs.readFile('test/fixtures/simpleHeading.pdf', (err, buf) => {
+    pdf.create('<h1>hyperpdf</h1>').toFile('test/simpleHeading.pdf', (err) => {
       if (err) {
         throw err
       }
 
-      fs.readFile('test/simpleHeading.pdf', (err, result) => {
+      fs.readFile('test/fixtures/simpleHeading.pdf', (err, buf) => {
         if (err) {
           throw err
         }
 
-        t.equal(result.length, buf.length)
-        t.end()
+        fs.readFile('test/simpleHeading.pdf', (err, result) => {
+          if (err) {
+            throw err
+          }
+
+          t.equal(result.length, buf.length)
+          t.end()
+        })
       })
     })
   })
