@@ -3,7 +3,7 @@ const fs = require('fs')
 const test = require('tape')
 
 
-test('write simple pdf with a heading to a file', (t) => {
+test('write simple pdf with a heading to a buffer', (t) => {
   pdf._initEnvironment((err) => {
       if (err) {
         throw err
